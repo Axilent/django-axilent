@@ -1,4 +1,4 @@
-from axl.hooks import ContentMapping
+from axilent.hooks import ContentMapping
 from axl_example.models import Article
 
 class ArticleMapping(ContentMapping):

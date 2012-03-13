@@ -10,7 +10,7 @@ class Author(models.Model):
     first_name = models.CharField(blank=True, max_length=100)
     last_name = models.CharField(blank=True, max_length=100)
     
-class Article(model.Model):
+class Article(models.Model):
     """
     An example model.
     """
@@ -19,3 +19,7 @@ class Article(model.Model):
     author = models.ForeignKey(Author,related_name='articles')
     section = models.CharField(blank=True, max_length=100)
     published_on = models.DateField()
+    
+    def __unicode__(self):
+        return self.name
+

@@ -4,7 +4,7 @@ Models for Django-Axilent.  Mostly just used as a hook to set up structure.
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
-from axl.utils import get_model_instance
+from axilent.utils import get_model_instance
 
 class AxilentProfileManager(models.Manager):
     """
@@ -14,6 +14,8 @@ class AxilentProfileManager(models.Manager):
         """
         Gets or creates an axilent profile for the user.
         """
+        if user and user.is_anonymous():
+            raise ValueError('Cannot associate a profile with an anonymous user.')
         try:
             return self.get(user=user)
         except AxilentProfile.DoesNotExist:
@@ -40,7 +42,7 @@ class ContentBindingManager(models.Manager):
         Gets the content binding for the model, if it exists.
         """
         app_label = instance._meta.app_label
-        model_name = instance.__name__
+        model_name = instance.__class__.__name__
         return self.get(app_label=app_label,model_name=model_name,model_pk=instance.pk)
     
     def create_for_model(self,instance,axilent_content_type,axilent_content_key):
@@ -84,5 +86,5 @@ class ContentBinding(models.Model):
 # =========================
 # = Hook to register apps =
 # =========================
-from axl.registry import register_apps
+from axilent.registry import register_apps
 register_apps()
