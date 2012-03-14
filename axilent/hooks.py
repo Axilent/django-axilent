@@ -113,12 +113,28 @@ class ContentChannel(object):
             except ContentBinding.DoesNotExist:
                 return None
     
+    def _build_kwargs(self,user,base_model):
+        """
+        Prepares keyword args for call.
+        """
+        kwargs = {}
+        profile = self._get_profile(user)
+        if profile:
+            kwargs['profile'] = profile
+        basekey = self._get_basekey(base_model)
+        if basekey:
+            kwargs['basekey'] = basekey
+        return kwargs
+        
+    
     def get(self,user=None,limit=None,base_model=None):
         """
         Gets the Channel results as dictionaries.
         """
         try:
-            return self.client.policycontent(profile=self._get_profile(user),content_policy_slug=self.slug,basekey=self._get_basekey(base_model))
+            kwargs = self._build_kwargs(user,base_model)
+            kwargs['content_policy_slug'] = self.slug
+            return self.client.policycontent(**kwargs)
         except:
             log.exception('Exception while contacting Axilent.')
             return {}
@@ -134,7 +150,7 @@ class ContentChannel(object):
             group_results = raw_results[group_name]
             for result in group_results:
                 content_type = result['content']['content_type']
-                content_key = int(result['content']['key'])
+                content_key = result['content']['key']
                 try:
                     binding = ContentBinding.objects.get(axilent_content_type=content_type,axilent_content_key=content_key)
                     group_model_results.append(binding.get_model())
@@ -153,7 +169,9 @@ class ContentGroup(ContentChannel):
         Addresses the group.
         """
         try:
-            return self.client.policyswap(profile=self._get_profile(user),content_swap_slug=self.slug,basekey=self._get_basekey(base_model))
+            kwargs = self._build_kwargs(user,base_model)
+            kwargs['content_swap_slug'] = self.slug
+            return self.client.policyswap(**kwargs)
         except:
             log.exception('Exception while contacting Axilent.')
             return {}
