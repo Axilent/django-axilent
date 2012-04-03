@@ -17,7 +17,7 @@ class Command(BaseCommand):
         else:
             # sync all the apps
             for app_path in settings.INSTALLED_APPS:
-                if app_path != 'axilent': # don't sync yourself
+                if app_path != 'axilent' and not app_path.startswith('django'): # don't sync yourself or django contrib apps
                     self.sync_app(app_path)
             
     def sync_app(self,app_name):
