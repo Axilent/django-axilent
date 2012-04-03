@@ -38,8 +38,8 @@ class Command(BaseCommand):
             if content_mapping.loadable:
                 keys = client.getcontentkeys(content_type_slug=slugify(content_mapping.content_type))
                 for content_key in keys:
-                    data = resource.get(content_type_slug=slugify(content_mapping.content_type),
-                                        content_key=content_key)
+                    data = resource.get(params={'content_type_slug':slugify(content_mapping.content_type),
+                                                'content_key':content_key})
                     try:
                         binding = ContentBinding.objects.get(axilent_content_type=content_mapping.content_type,
                                                              axilent_content_key=content_key)
