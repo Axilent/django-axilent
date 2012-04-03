@@ -67,9 +67,9 @@ def on_content_save(sender,**kwargs):
     """
     try:
         mapping = content_mappings[sender]
-        mapping.save_to_axilent(kwargs['instance'])
+        if mapping.saveable:
+            mapping.save_to_axilent(kwargs['instance'])
     except KeyError:
         pass # no mapping for that model
 
-    
     

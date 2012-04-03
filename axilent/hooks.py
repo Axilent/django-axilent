@@ -30,9 +30,7 @@ class ContentMapping(object):
         client = utils.resource('axilent.airtower','content')
         
         # populate field data
-        data = {}
-        for field in self.fields:
-            data[field] = getattr(instance,field)
+        data = self.on_save({},instance)
         
         try:
             binding = ContentBinding.objects.for_model(instance)
@@ -50,20 +48,66 @@ class ContentMapping(object):
             response_content_type, response_content_key = response['created_content'].split(':')
             ContentBinding.objects.create_for_model(instance,response_content_type,response_content_key)
     
-    def get_model(self,data):
+    def load_from_axilent(self,data):
         """
-        Gets the local model for the supplied content result.
+        Loads and synchronizes the local model to the remote data.
         """
-        pk_field = 'id'
-        if hasattr(self,'pk_field'):
-            pk_field = self.pk_field
+        pk_field = 'id' if not hasattr(self,'pk_field') else self.pk_field
+        pk_value = data[pk_field]
+        model = self.model.objects.get(**{pk_field:pk_value})
+        return self.on_load(data,model)
         
-        try:
-            model_pk = data[pk_field]
-            return self.model.objects.get(pk=model_pk)
-        except KeyError:
-            raise Exception('The primary key field "%s" does not exist in the supplied content data.  Make sure the field has been defined visible in the Axilent content type.' % pk_field)
         
+    def on_load(self,data,model):
+        """
+        Called to sync the local model to the remote data.  Subclasses should override this method.
+        """
+        if hasattr(self.fields):
+            for field in self.fields:
+                try:
+                    setattr(model,field,data[field])
+                except AttributeError, KeyError as e:
+                    log.warn(u'Cannot save field %s on model %s.  Field is either missing from Axilent content or local model.' % (field,unicode(model)))
+            model.save()
+        else:
+            log.warn('Calling default on_load() method on ContentMapping for %s, but no fields have been defined.  No-op.' % unicode(self.model))
+        
+        return model
+    
+    def on_save(self,data,model):
+        """
+        Called to sync remote data to local model.  Subclasses should override this method.
+        """
+        if hasattr(self.fields):
+            for field in self.fields:
+                try:
+                    data[field] = getattr(model,field)
+                except AttributeError:
+                    log.error('Local model %s does not have field %s, defined in the content binding.' % (unicode(self.model),field))
+        else:
+            log.warn('Calling default on_save() method on ContentMapping for %s, but no fields have been defined.  No-op.' % unicode(self.model))
+        
+        return data
+    
+    @property
+    def saveable(self):
+        """
+        Indicates if the local models should be saved back to Axilent.  Defaults to True
+        """
+        if hasattr(self,'save_to_axilent'):
+            return self.save_to_axilent
+        else:
+            return True
+    
+    @property
+    def loadable(self):
+        """
+        Indicates if the local models should load data from Axilent.  Defaults to True.
+        """
+        if hasattr(self,'load_from_axilent'):
+            return self.load_from_axilent
+        else:
+            return True
 
 # ============
 # = Triggers =
