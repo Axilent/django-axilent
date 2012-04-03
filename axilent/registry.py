@@ -64,7 +64,7 @@ def get_content_mappings(app_path):
     content_mappings = []
     content_module = get_module('%s.axl.content' % app_path)
     from axilent.hooks import ContentMapping
-    for name, attribute in inspect.getmembers(module):
+    for name, attribute in inspect.getmembers(content_module):
         if inspect.isclass(attribute) and issubclass(attribute,ContentMapping) and not attribute is ContentMapping:
             content_mappings.append(attribute()) # Add instantiation of content mapping class
     return content_mappings
