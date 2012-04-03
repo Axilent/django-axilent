@@ -6,6 +6,9 @@ from sharrock.registry import get_module
 import inspect
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import logging
+
+log = logging.getLogger('axilent.registry')
 
 content_mappings = {}
 reverse_content_mappings = {}
@@ -55,6 +58,7 @@ def load_content(app_path,module):
         if inspect.isclass(attribute) and issubclass(attribute,ContentMapping) and not attribute is ContentMapping:
              content_mappings[attribute.model] = attribute() # put an instance of the ContentMapping keyed to its Model class
              reverse_content_mappings[attribute.content_type] = attribute() # put in instance in a map keyed to the content type name
+             log.info('Registered Axilent content mapping for model %s.' % unicode(attribute.model))
 
 # ================
 # = Signal hooks =
