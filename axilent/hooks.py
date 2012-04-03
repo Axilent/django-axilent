@@ -47,15 +47,6 @@ class ContentMapping(object):
                                          'content':data})
             response_content_type, response_content_key = response['created_content'].split(':')
             ContentBinding.objects.create_for_model(instance,response_content_type,response_content_key)
-    
-    def load_from_axilent(self,data):
-        """
-        Loads and synchronizes the local model to the remote data.
-        """
-        pk_field = 'id' if not hasattr(self,'pk_field') else self.pk_field
-        pk_value = data[pk_field]
-        model = self.model.objects.get(**{pk_field:pk_value})
-        return self.on_load(data,model)
         
         
     def on_load(self,data,model):

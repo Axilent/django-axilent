@@ -53,12 +53,22 @@ def load_content(app_path,module):
     """
     Loads content mappings from the specified module.
     """
+    for mapping in get_content_mappings(app_path):
+        content_mappings[mapping.model] = mapping
+        reverse_content_mappings[mapping.content_type] = mapping
+
+def get_content_mappings(app_path):
+    """
+    Gets the content mappings for the specified app.
+    """
+    content_mappings = []
+    content_module = get_module('%s.axl.content' % app_path)
     from axl.hooks import ContentMapping
-    for name,attribute in inspect.getmembers(module):
+    for name, attribute in inspect.getmembers(module):
         if inspect.isclass(attribute) and issubclass(attribute,ContentMapping) and not attribute is ContentMapping:
-             content_mappings[attribute.model] = attribute() # put an instance of the ContentMapping keyed to its Model class
-             reverse_content_mappings[attribute.content_type] = attribute() # put in instance in a map keyed to the content type name
-             log.info('Registered Axilent content mapping for model %s.' % unicode(attribute.model))
+            content_mappings.append(attribute()) # Add instantiation of content mapping class
+    return content_mappings
+    
 
 # ================
 # = Signal hooks =
