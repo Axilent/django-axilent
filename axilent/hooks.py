@@ -66,7 +66,7 @@ class ContentMapping(object):
             for field in self.fields:
                 try:
                     setattr(model,field,data[field])
-                except AttributeError, KeyError as e:
+                except AttributeError, KeyError:
                     log.warn(u'Cannot save field %s on model %s.  Field is either missing from Axilent content or local model.' % (field,unicode(model)))
             model.save()
         else:
