@@ -33,7 +33,7 @@ class Command(BaseCommand):
         """
         print 'synchonizing',app_name,'to Axilent.'
         for content_mapping in get_content_mappings(app_name):
-            if content_mapping.loadable():
+            if content_mapping.loadable:
                 keys = client.getcontentkeys(content_type_slug=slugify(content_mapping.content_type))
                 for content_key in keys:
                     data = resource.get(content_type_slug=slugify(content_mapping.content_type),
