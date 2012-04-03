@@ -8,12 +8,14 @@ from axilent import utils
 from axilent.models import ContentBinding
 from django.template.defaultfilters import slugify
 
+resource = utils.resource('axilent.content','content')
+client = utils.client('axilent.content')
+
+
 class Command(BaseCommand):
     """
     Command class.
     """
-    resource = utils.resource('axilent.content','content')
-    client = utils.client('axilent.content')
     
     def handle(self,*args,**kwargs):
         """
