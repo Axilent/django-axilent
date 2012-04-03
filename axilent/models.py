@@ -50,7 +50,7 @@ class ContentBindingManager(models.Manager):
         Creates a binding.
         """
         app_label = instance._meta.app_label
-        model_name = instance.__name__
+        model_name = instance.__class__.__name__
         return self.create(app_label=app_label,
                            model_name=model_name,
                            model_pk=instance.pk,
