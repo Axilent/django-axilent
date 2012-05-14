@@ -162,7 +162,7 @@ class ContentChannel(object):
         return kwargs
         
     
-    def get(self,user=None,limit=None,base_model=None):
+    def get(self,user=None,limit=0,base_model=None):
         """
         Gets the Channel results as dictionaries.
         """
@@ -174,7 +174,7 @@ class ContentChannel(object):
             log.exception('Exception while contacting Axilent.')
             return {}
     
-    def get_models(self,user=None,limit=None,base_model=None):
+    def get_models(self,user=None,limit=0,base_model=None):
         """
         Gets the Channel results, reconstituted as models.
         """
