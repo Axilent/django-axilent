@@ -169,6 +169,7 @@ class ContentChannel(object):
         try:
             kwargs = self._build_kwargs(user,base_model)
             kwargs['content_policy_slug'] = self.slug
+            print 'using kwargs',kwargs
             return self.client.policycontent(**kwargs)
         except:
             log.exception('Exception while contacting Axilent.')
