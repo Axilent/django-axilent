@@ -162,12 +162,13 @@ class ContentChannel(object):
         return kwargs
         
     
-    def get(self,user=None,limit=0,base_model=None):
+    def get(self,user=None,limit=0,base_model=None,**kwargs):
         """
         Gets the Channel results as dictionaries.
         """
+        kwargs = kwargs.copy()
         try:
-            kwargs = self._build_kwargs(user,base_model)
+            kwargs.update(self._build_kwargs(user,base_model))
             kwargs['channel'] = self.slug
             print 'using kwargs',kwargs
             return self.client.contentchannel(**kwargs)
