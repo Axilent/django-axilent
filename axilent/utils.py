@@ -6,7 +6,7 @@ Utilities for the Axl package.
 # ============
 end_point = 'https://www.axilent.net'
 api_key = None
-api_version = 'beta2'
+api_version = 'beta3'
 api_path = '/api'
 resource_path = '/api/resource'
 project = None
